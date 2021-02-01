@@ -72,8 +72,7 @@ letter_counts %>%
   pivot_longer(!letter, names_to = "character", values_to = "frequency") %>% 
   filter(character != "freq_overall") %>% 
   arrange(desc(frequency)) %>% 
-  slice(1:25) %>%
-  count(letter)
+  slice(1:25)
 
 # Top 5 letters by position
 position_summary <- letter_counts %>% 
@@ -86,12 +85,12 @@ position_summary <- letter_counts %>%
 
 # How many times does a letter appear multiple times per word?
 double_letters <- as_tibble(cbind(letters, 0))
-colnames(double_letters) <- c("letter", "multiple_occurances")
-double_letters$multiple_occurances <- as.double(double_letters$multiple_occurances)
+colnames(double_letters) <- c("letter", "multiple_occurrences")
+double_letters$multiple_occurrences <- as.double(double_letters$multiple_occurrences)
 for (i in 1:26) {
-  occurances <- five_letter_words %>%
+  occurrences <- five_letter_words %>%
     filter(str_count(as.character(word), letters[i]) > 1)
-  double_letters[i, 2] <- nrow(occurances)
+  double_letters[i, 2] <- nrow(occurrences)
 }
 
 # Explore outcomes for random mystery words
@@ -248,7 +247,7 @@ possibilities_for_guess <- function(mystery_letters, my_guess) {
 }
 
 # How well does my guess perform?
-my_guess <- c("cares", "soapy", "feint", "lucid")
+my_guess <- c("bares", "sophy", "meant", "lucid")
 my_guess_for_all_words <- rep(0, nrow(five_letter_words))
 for (i in 1:nrow(five_letter_words)) {
   current_word <- five_letter_words[i, ]
@@ -257,11 +256,18 @@ for (i in 1:nrow(five_letter_words)) {
 
 mean(my_guess_for_all_words)
 mean(my_guess_for_all_words == 1)
-# On average, there were 1.47 possibilities remaining
-# There was one possibility 73% of the time
+mean(1/my_guess_for_all_words)
 
+# On average, there were 1.29 possibilities remaining
+# There was one possibility 81% of the time
+# Probability of guessing correctly: 89.2%
+
+# For mares, soapy, feint, lucid:
+# On average, there were 1.34 possibilities remaining
+# There was one possibility 78% of the time
+
+# Which word tripped up this set of guesses the most?
 five_letter_words[which.max(my_guess_for_all_words), ]
-# The word that tripped my guess up most was ragee
 
 # Best random guess
 random_guess <- c("webby", "riper", "brunt", "yacks")
@@ -276,11 +282,13 @@ for (i in 1:nrow(five_letter_words)) {
 
 mean(random_guess_for_all_words)
 mean(random_guess_for_all_words == 1)
+mean(random_guess_for_all_words)
 
 
-# Based on my guesses, view the possibilities remaining for mystery word ragee
+# Based on guesses mares, soapy, feint, lucid:
+# view the possibilities remaining for mystery word ragee
 five_letter_words %>%
-  filter(!str_detect(word, "c|s|o|p|y|f|i|n|t|l|u|d") &
+  filter(!str_detect(word, "m|s|o|p|y|f|i|n|t|l|u|c|d") &
            letter1=="r" &
            letter2=="a" &
            letter4=="e" &
